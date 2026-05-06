@@ -14,10 +14,16 @@ import com.movie.catalog.dto.GenreRequestDTO;
 import com.movie.catalog.dto.GenreResponseDTO;
 import com.movie.catalog.service.GenreService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/genres")
+@Tag(
+    name = "Genre Management",
+    description = "APIs for managing movie genres"
+)
 public class GenreController {
 
     private final GenreService genreService;
@@ -28,12 +34,14 @@ public class GenreController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public GenreResponseDTO create(@Valid @RequestBody GenreRequestDTO dto) {
+    @Operation(summary = "Create genre")
+    public GenreResponseDTO createGenre(@Valid @RequestBody GenreRequestDTO dto) {
         return genreService.create(dto);
     }
 
     @GetMapping
-    public List<GenreResponseDTO> getAll() {
+    @Operation(summary = "Get all genres")
+    public List<GenreResponseDTO> getAllGenres() {
         return genreService.getAll();
     }
 }

@@ -1,0 +1,420 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+  description: REST API for managing movies, directors, and genre associations.
+servers:
+- url: http://localhost:8090
+  description: Generated server url
+tags:
+- name: Movie Management
+  description: "APIs for managing movies, filtering, and genre associations"
+- name: Director Management
+  description: APIs for managing directors and retrieving their associated movies
+- name: Genre Management
+  description: APIs for managing movie genres
+- name: System Info
+  description: Application metadata and configuration info
+paths:
+  /api/movies/{id}:
+    get:
+      tags:
+      - Movie Management
+      summary: Get movie by id
+      operationId: getMovieById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MovieResponseDTO"
+    put:
+      tags:
+      - Movie Management
+      summary: Update movie
+      operationId: updateMovie
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MovieRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MovieResponseDTO"
+    delete:
+      tags:
+      - Movie Management
+      summary: Delete movie
+      operationId: deleteMovie
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: No Content
+  /api/directors/{id}:
+    get:
+      tags:
+      - Director Management
+      summary: Get director by ID
+      operationId: getDirectorById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DirectorResponseDTO"
+    put:
+      tags:
+      - Director Management
+      summary: Update director details
+      operationId: updateDirector
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DirectorRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DirectorResponseDTO"
+    delete:
+      tags:
+      - Director Management
+      summary: Delete director
+      operationId: deleteDirector
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: No Content
+  /api/movies:
+    get:
+      tags:
+      - Movie Management
+      summary: Get all movies (with optional filters)
+      operationId: getAllMovies
+      parameters:
+      - name: genre
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: year
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MovieResponseDTO"
+    post:
+      tags:
+      - Movie Management
+      summary: Create movie
+      operationId: createMovie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MovieRequestDTO"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MovieResponseDTO"
+  /api/movies/{id}/genres/{gid}:
+    post:
+      tags:
+      - Movie Management
+      summary: Add genre to movie
+      operationId: addGenreToMovie
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: gid
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: No Content
+    delete:
+      tags:
+      - Movie Management
+      summary: Remove genre from movie
+      operationId: removeGenreFromMovie
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: gid
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: No Content
+  /api/genres:
+    get:
+      tags:
+      - Genre Management
+      summary: Get all genres
+      operationId: getAllGenres
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GenreResponseDTO"
+    post:
+      tags:
+      - Genre Management
+      summary: Create genre
+      operationId: createGenre
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenreRequestDTO"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/GenreResponseDTO"
+  /api/directors:
+    get:
+      tags:
+      - Director Management
+      summary: Get all directors
+      operationId: getAllDirectors
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DirectorResponseDTO"
+    post:
+      tags:
+      - Director Management
+      summary: Create a director
+      operationId: createDirector
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DirectorRequestDTO"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DirectorResponseDTO"
+  /api/info:
+    get:
+      tags:
+      - System Info
+      summary: Get application info
+      operationId: getInfo
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /api/directors/{id}/movies:
+    get:
+      tags:
+      - Director Management
+      summary: Get all movies by director
+      operationId: getMoviesByDirector
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MovieResponseDTO"
+components:
+  schemas:
+    MovieRequestDTO:
+      required:
+      - directorId
+      - releaseYear
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+        releaseYear:
+          type: integer
+          format: int32
+        rating:
+          maximum: 10.0
+          exclusiveMaximum: false
+          minimum: 0.0
+          exclusiveMinimum: false
+          type: number
+          format: double
+        directorId:
+          type: integer
+          format: int64
+        genreIds:
+          uniqueItems: true
+          type: array
+          items:
+            type: integer
+            format: int64
+    DirectorResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        nationality:
+          type: string
+        birthYear:
+          type: integer
+          format: int32
+    GenreResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    MovieResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        releaseYear:
+          type: integer
+          format: int32
+        rating:
+          type: number
+          format: double
+        director:
+          $ref: "#/components/schemas/DirectorResponseDTO"
+        genres:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: "#/components/schemas/GenreResponseDTO"
+    DirectorRequestDTO:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        nationality:
+          type: string
+        birthYear:
+          type: integer
+          format: int32
+    GenreRequestDTO:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string

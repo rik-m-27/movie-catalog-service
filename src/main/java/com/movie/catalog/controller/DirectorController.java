@@ -1,15 +1,5 @@
 package com.movie.catalog.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-
-import com.movie.catalog.dto.DirectorRequestDTO;
-import com.movie.catalog.dto.DirectorResponseDTO;
-import com.movie.catalog.dto.MovieResponseDTO;
-import com.movie.catalog.service.DirectorService;
-import com.movie.catalog.service.MovieService;
-
-import jakarta.validation.Valid;
-
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -21,9 +11,24 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.movie.catalog.dto.DirectorRequestDTO;
+import com.movie.catalog.dto.DirectorResponseDTO;
+import com.movie.catalog.dto.MovieResponseDTO;
+import com.movie.catalog.service.DirectorService;
+import com.movie.catalog.service.MovieService;
+
+import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/api/directors")
+@Tag(
+    name = "Director Management",
+    description = "APIs for managing directors and retrieving their associated movies"
+)
 public class DirectorController {
 
     private final DirectorService directorService;
@@ -36,33 +41,40 @@ public class DirectorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DirectorResponseDTO create(@RequestBody @Valid DirectorRequestDTO request) {
+    @Operation(summary = "Create a director")
+    public DirectorResponseDTO createDirector(@RequestBody @Valid DirectorRequestDTO request) {
         return directorService.create(request);
     }
 
     @GetMapping
-    public List<DirectorResponseDTO> getAll() {
+    @Operation(summary = "Get all directors")
+    public List<DirectorResponseDTO> getAllDirectors() {
         return directorService.getAll();
     }
 
     @GetMapping("/{id}")
-    public DirectorResponseDTO getById(@PathVariable Long id) {
+    @Operation(summary = "Get director by ID")
+    public DirectorResponseDTO getDirectorById(@PathVariable Long id) {
         return directorService.getById(id);
     }
 
     @PutMapping("/{id}")
-    public DirectorResponseDTO update(@PathVariable Long id,
-                                      @RequestBody @Valid DirectorRequestDTO request) {
+    @Operation(summary = "Update director details")
+    public DirectorResponseDTO updateDirector(
+            @PathVariable Long id,
+            @RequestBody @Valid DirectorRequestDTO request) {
         return directorService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    @Operation(summary = "Delete director")
+    public void deleteDirector(@PathVariable Long id) {
         directorService.delete(id);
     }
 
     @GetMapping("/{id}/movies")
+    @Operation(summary = "Get all movies by director")
     public List<MovieResponseDTO> getMoviesByDirector(@PathVariable Long id) {
         return movieService.getMoviesByDirector(id);
     }

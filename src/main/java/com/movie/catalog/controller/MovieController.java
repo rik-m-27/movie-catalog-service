@@ -9,10 +9,16 @@ import com.movie.catalog.dto.MovieRequestDTO;
 import com.movie.catalog.dto.MovieResponseDTO;
 import com.movie.catalog.service.MovieService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/movies")
+@Tag(
+    name = "Movie Management",
+    description = "APIs for managing movies, filtering, and genre associations"
+)
 public class MovieController {
 
     private final MovieService movieService;
@@ -23,17 +29,20 @@ public class MovieController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MovieResponseDTO create(@Valid @RequestBody MovieRequestDTO request) {
+    @Operation(summary = "Create movie")
+    public MovieResponseDTO createMovie(@Valid @RequestBody MovieRequestDTO request) {
         return movieService.create(request);
     }
 
     @GetMapping("/{id}")
-    public MovieResponseDTO getById(@PathVariable Long id) {
+    @Operation(summary = "Get movie by id")
+    public MovieResponseDTO getMovieById(@PathVariable Long id) {
         return movieService.getById(id);
     }
 
     @GetMapping
-    public List<MovieResponseDTO> getAll(
+    @Operation(summary = "Get all movies (with optional filters)")
+    public List<MovieResponseDTO> getAllMovies(
             @RequestParam(required = false) String genre,
             @RequestParam(required = false) Integer year) {
 
@@ -42,23 +51,29 @@ public class MovieController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    @Operation(summary = "Delete movie")
+    public void deleteMovie(@PathVariable Long id) {
         movieService.delete(id);
     }
 
     @PutMapping("/{id}")
-    public MovieResponseDTO update(@PathVariable Long id, @Valid @RequestBody MovieRequestDTO request) {
+    @Operation(summary = "Update movie")
+    public MovieResponseDTO updateMovie(@PathVariable Long id,
+                                        @Valid @RequestBody MovieRequestDTO request) {
         return movieService.update(id, request);
     }
 
     @PostMapping("/{id}/genres/{gid}")
-    public void addGenre(@PathVariable Long id, @PathVariable Long gid) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Add genre to movie")
+    public void addGenreToMovie(@PathVariable Long id, @PathVariable Long gid) {
         movieService.addGenreToMovie(id, gid);
     }
 
     @DeleteMapping("/{id}/genres/{gid}")
-    public void removeGenre(@PathVariable Long id, @PathVariable Long gid) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Remove genre from movie")
+    public void removeGenreFromMovie(@PathVariable Long id, @PathVariable Long gid) {
         movieService.removeGenreFromMovie(id, gid);
     }
-
 }
