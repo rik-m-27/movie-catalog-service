@@ -11,10 +11,11 @@ import com.movie.catalog.entity.Movie;
 public interface MovieRepository extends JpaRepository<Movie, Long>{
 
     @Query("""
-        SELECT DISTINCT m FROM Movie m
-        LEFT JOIN m.genres g
+        SELECT m FROM Movie m
         WHERE (:year IS NULL OR m.releaseYear = :year)
-        AND (:genre IS NULL OR g.name = :genre)
+        AND (:genre IS NULL OR EXISTS (
+            SELECT 1 FROM m.genres g WHERE g.name = :genre
+        ))
     """)
     List<Movie> findByFilters(@Param("genre") String genre, @Param("year") Integer year);
 
