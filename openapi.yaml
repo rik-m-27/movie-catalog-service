@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: OpenAPI definition
-  version: v0
+  title: Movie Catalog Service API
+  version: 1.0.0
   description: REST API for managing movies, directors, and genre associations.
 servers:
 - url: http://localhost:8090
@@ -14,13 +14,14 @@ tags:
 - name: Genre Management
   description: APIs for managing movie genres
 - name: System Info
-  description: Application metadata and configuration info
+  description: Provides runtime application metadata such as service name and version
 paths:
   /api/movies/{id}:
     get:
       tags:
       - Movie Management
-      summary: Get movie by id
+      summary: Get movie by ID
+      description: Fetch detailed movie information including director and genres
       operationId: getMovieById
       parameters:
       - name: id
@@ -33,13 +34,15 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/MovieResponseDTO"
     put:
       tags:
       - Movie Management
-      summary: Update movie
+      summary: Update movie details
+      description: "Updates movie attributes such as title, rating, director, and\
+        \ genres"
       operationId: updateMovie
       parameters:
       - name: id
@@ -49,6 +52,7 @@ paths:
           type: integer
           format: int64
       requestBody:
+        description: Updated movie payload
         content:
           application/json:
             schema:
@@ -58,13 +62,14 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/MovieResponseDTO"
     delete:
       tags:
       - Movie Management
       summary: Delete movie
+      description: Permanently removes a movie from the catalog
       operationId: deleteMovie
       parameters:
       - name: id
@@ -81,6 +86,7 @@ paths:
       tags:
       - Director Management
       summary: Get director by ID
+      description: Fetches a single director along with basic profile information
       operationId: getDirectorById
       parameters:
       - name: id
@@ -93,13 +99,14 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/DirectorResponseDTO"
     put:
       tags:
       - Director Management
       summary: Update director details
+      description: Updates existing director information by ID
       operationId: updateDirector
       parameters:
       - name: id
@@ -109,6 +116,7 @@ paths:
           type: integer
           format: int64
       requestBody:
+        description: Updated director payload
         content:
           application/json:
             schema:
@@ -118,13 +126,14 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/DirectorResponseDTO"
     delete:
       tags:
       - Director Management
       summary: Delete director
+      description: Removes a director permanently from the system
       operationId: deleteDirector
       parameters:
       - name: id
@@ -140,7 +149,9 @@ paths:
     get:
       tags:
       - Movie Management
-      summary: Get all movies (with optional filters)
+      summary: Get all movies
+      description: Returns list of movies. Supports optional filtering by genre name
+        and release year
       operationId: getAllMovies
       parameters:
       - name: genre
@@ -158,7 +169,7 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
@@ -166,9 +177,13 @@ paths:
     post:
       tags:
       - Movie Management
-      summary: Create movie
+      summary: Create a new movie
+      description: "Creates a movie entry with title, release year, rating, director,\
+        \ and associated genres"
       operationId: createMovie
       requestBody:
+        description: "Movie creation payload including title, directorId, rating,\
+          \ and genreIds"
         content:
           application/json:
             schema:
@@ -178,7 +193,7 @@ paths:
         "201":
           description: Created
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/MovieResponseDTO"
   /api/movies/{id}/genres/{gid}:
@@ -186,6 +201,8 @@ paths:
       tags:
       - Movie Management
       summary: Add genre to movie
+      description: Associates an existing genre with a movie and returns the updated
+        movie details
       operationId: addGenreToMovie
       parameters:
       - name: id
@@ -201,12 +218,17 @@ paths:
           type: integer
           format: int64
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MovieResponseDTO"
     delete:
       tags:
       - Movie Management
       summary: Remove genre from movie
+      description: Removes an associated genre from a movie
       operationId: removeGenreFromMovie
       parameters:
       - name: id
@@ -229,12 +251,13 @@ paths:
       tags:
       - Genre Management
       summary: Get all genres
+      description: Returns list of all available movie genres in the system
       operationId: getAllGenres
       responses:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
@@ -242,9 +265,11 @@ paths:
     post:
       tags:
       - Genre Management
-      summary: Create genre
+      summary: Create a new genre
+      description: "Creates a movie genre such as Action, Drama, Thriller, or Comedy."
       operationId: createGenre
       requestBody:
+        description: "Genre creation payload (e.g., Action, Drama)"
         content:
           application/json:
             schema:
@@ -254,7 +279,7 @@ paths:
         "201":
           description: Created
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/GenreResponseDTO"
   /api/directors:
@@ -262,12 +287,13 @@ paths:
       tags:
       - Director Management
       summary: Get all directors
+      description: Returns a list of all directors in the system
       operationId: getAllDirectors
       responses:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
@@ -275,9 +301,11 @@ paths:
     post:
       tags:
       - Director Management
-      summary: Create a director
+      summary: Create a new director
+      description: "Creates a director entry with name, nationality, and birth year."
       operationId: createDirector
       requestBody:
+        description: Director creation payload
         content:
           application/json:
             schema:
@@ -287,7 +315,7 @@ paths:
         "201":
           description: Created
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/DirectorResponseDTO"
   /api/info:
@@ -295,21 +323,21 @@ paths:
       tags:
       - System Info
       summary: Get application info
+      description: Returns the service name and version from configuration.
       operationId: getInfo
       responses:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
-                type: object
-                additionalProperties:
-                  type: string
+                $ref: "#/components/schemas/AppInfoResponseDTO"
   /api/directors/{id}/movies:
     get:
       tags:
       - Director Management
-      summary: Get all movies by director
+      summary: Get movies by director
+      description: Fetches all movies associated with a given director ID
       operationId: getMoviesByDirector
       parameters:
       - name: id
@@ -322,7 +350,7 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
@@ -338,9 +366,11 @@ components:
       properties:
         title:
           type: string
+          example: "URI: The Surgical Strike"
         releaseYear:
           type: integer
           format: int32
+          example: 2019
         rating:
           maximum: 10.0
           exclusiveMaximum: false
@@ -348,50 +378,73 @@ components:
           exclusiveMinimum: false
           type: number
           format: double
+          example: 8.2
         directorId:
           type: integer
           format: int64
+          example: 1
         genreIds:
           uniqueItems: true
           type: array
+          description: List of genre IDs associated with the movie
+          example:
+          - 1
+          - 2
           items:
             type: integer
+            description: List of genre IDs associated with the movie
             format: int64
+      description: Request payload for creating or updating a movie
     DirectorResponseDTO:
       type: object
       properties:
         id:
           type: integer
+          description: Unique director ID
           format: int64
+          example: 1
         name:
           type: string
+          example: Aditya Dhar
         nationality:
           type: string
+          example: Indian
         birthYear:
           type: integer
           format: int32
+          example: 1983
+      description: Response payload containing director details
     GenreResponseDTO:
       type: object
       properties:
         id:
           type: integer
+          description: Unique genre ID
           format: int64
+          example: 1
         name:
           type: string
+          description: Name of the genre
+          example: Action
+      description: Response payload containing genre details
     MovieResponseDTO:
       type: object
       properties:
         id:
           type: integer
           format: int64
+          example: 101
         title:
           type: string
+          example: "URI: The Surgical Strike"
         releaseYear:
           type: integer
           format: int32
+          example: 2019
         rating:
           type: number
           format: double
+          example: 8.2
         director:
           $ref: "#/components/schemas/DirectorResponseDTO"
         genres:
@@ -399,6 +452,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/GenreResponseDTO"
+      description: Response payload containing full movie details
     DirectorRequestDTO:
       required:
       - name
@@ -406,11 +460,18 @@ components:
       properties:
         name:
           type: string
+          description: Full name of the director
+          example: Aditya Dhar
         nationality:
           type: string
+          description: Nationality of the director
+          example: Indian
         birthYear:
           type: integer
+          description: Year of birth
           format: int32
+          example: 1983
+      description: Request payload for creating or updating a film director
     GenreRequestDTO:
       required:
       - name
@@ -418,3 +479,17 @@ components:
       properties:
         name:
           type: string
+          description: Name of the genre
+          example: Action
+      description: Request payload for creating a movie genre
+    AppInfoResponseDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The official name of the microservice
+          example: inventory-service
+        version:
+          type: string
+          description: The current semantic version of the application
+          example: 1.2.4-RELEASE

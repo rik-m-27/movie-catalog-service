@@ -74,65 +74,6 @@ class MovieIntegrationTest {
                 .andExpect(jsonPath("$.genres[0].id").value(genre.getId()));
     }
 
-    private DirectorResponseDTO createDirector(String name, String nationality, int birthYear) throws Exception{
-
-        DirectorRequestDTO directorRequest = DirectorRequestDTO.builder()
-                .name(name)
-                .nationality(nationality)
-                .birthYear(birthYear)
-                .build();
-
-        String directorResponse = mockMvc.perform(post("/api/directors")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(directorRequest)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value(directorRequest.getName()))
-                .andExpect(jsonPath("$.birthYear").value(directorRequest.getBirthYear()))
-                .andExpect(jsonPath("$.nationality").value(directorRequest.getNationality()))
-                .andReturn().getResponse().getContentAsString();
-
-        return objectMapper.readValue(directorResponse, DirectorResponseDTO.class);
-    }
-
-    private GenreResponseDTO createGenre(String name) throws Exception{
-
-        GenreRequestDTO request = GenreRequestDTO.builder()
-                .name(name)
-                .build();
-
-        String response = mockMvc.perform(post("/api/genres")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value(name))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        return objectMapper.readValue(response, GenreResponseDTO.class);
-    }
-
-    private MovieResponseDTO createMovie(Long directorId, Long genreId, String title, Integer releaseYear) throws Exception {
-
-        MovieRequestDTO request = MovieRequestDTO.builder()
-                .title(title)
-                .releaseYear(releaseYear)
-                .rating(9.0)
-                .directorId(directorId)
-                .genreIds(Set.of(genreId))
-                .build();
-
-        String response = mockMvc.perform(post("/api/movies")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.title").value(title))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        return objectMapper.readValue(response, MovieResponseDTO.class);
-    }
 
     @Test
     void createMovie_validationFailure_shouldReturn400() throws Exception {
@@ -198,4 +139,66 @@ class MovieIntegrationTest {
                 .andExpect(jsonPath("$[0].title").value("Dhurandhar"))
                 .andExpect(jsonPath("$[0].genres[0].name").value("Action"));
     }
+
+
+    private DirectorResponseDTO createDirector(String name, String nationality, int birthYear) throws Exception{
+
+        DirectorRequestDTO directorRequest = DirectorRequestDTO.builder()
+                .name(name)
+                .nationality(nationality)
+                .birthYear(birthYear)
+                .build();
+
+        String directorResponse = mockMvc.perform(post("/api/directors")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(directorRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value(directorRequest.getName()))
+                .andExpect(jsonPath("$.birthYear").value(directorRequest.getBirthYear()))
+                .andExpect(jsonPath("$.nationality").value(directorRequest.getNationality()))
+                .andReturn().getResponse().getContentAsString();
+
+        return objectMapper.readValue(directorResponse, DirectorResponseDTO.class);
+    }
+
+    private GenreResponseDTO createGenre(String name) throws Exception{
+
+        GenreRequestDTO request = GenreRequestDTO.builder()
+                .name(name)
+                .build();
+
+        String response = mockMvc.perform(post("/api/genres")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value(name))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        return objectMapper.readValue(response, GenreResponseDTO.class);
+    }
+
+    private MovieResponseDTO createMovie(Long directorId, Long genreId, String title, Integer releaseYear) throws Exception {
+
+        MovieRequestDTO request = MovieRequestDTO.builder()
+                .title(title)
+                .releaseYear(releaseYear)
+                .rating(9.0)
+                .directorId(directorId)
+                .genreIds(Set.of(genreId))
+                .build();
+
+        String response = mockMvc.perform(post("/api/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.title").value(title))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        return objectMapper.readValue(response, MovieResponseDTO.class);
+    }
+    
 }

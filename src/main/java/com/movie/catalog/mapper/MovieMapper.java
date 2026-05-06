@@ -2,7 +2,6 @@ package com.movie.catalog.mapper;
 
 import java.util.stream.Collectors;
 
-import com.movie.catalog.dto.GenreResponseDTO;
 import com.movie.catalog.dto.MovieRequestDTO;
 import com.movie.catalog.dto.MovieResponseDTO;
 import com.movie.catalog.entity.Movie;

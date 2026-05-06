@@ -1,78 +1,57 @@
 package com.movie.catalog.exception;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.movie.catalog.dto.ErrorResponseDTO;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
-        
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", status.value());
-        error.put("error", status.getReasonPhrase());
-        error.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(error, status);
+    public ResponseEntity<ErrorResponseDTO> handleNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
-
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Map<String, Object>> handleBadRequest(BadRequestException ex) {
-
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", status.value());
-        error.put("error", status.getReasonPhrase());
-        error.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(error, status);
+    public ResponseEntity<ErrorResponseDTO> handleBadRequest(BadRequestException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
-
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", status.value());
-        error.put("error", status.getReasonPhrase());
-
-        List<String> messages = ex.getBindingResult()
+    public ResponseEntity<ErrorResponseDTO> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        String details = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(err -> err.getField() + ": " + err.getDefaultMessage())
-                .toList();
+                .collect(Collectors.joining(", "));
 
-        error.put("message", messages);
-
-        return new ResponseEntity<>(error, status);
+        return buildResponse(HttpStatus.BAD_REQUEST, "Validation failed: " + details, request);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
+    public ResponseEntity<ErrorResponseDTO> handleGeneric(Exception ex, HttpServletRequest request) {
+        
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred: " + ex.getMessage(), request);
+    }
 
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", status.value());
-        error.put("error", status.getReasonPhrase());
-        error.put("message", ex.getMessage());
+    private ResponseEntity<ErrorResponseDTO> buildResponse(HttpStatus status, String message, HttpServletRequest request) {
+        ErrorResponseDTO error = ErrorResponseDTO.builder()
+                .timestamp(OffsetDateTime.now(ZoneOffset.UTC))
+                .status(status.value())
+                .error(status.getReasonPhrase())
+                .message(message)
+                .path(request.getRequestURI())
+                .build();
 
         return new ResponseEntity<>(error, status);
     }
-
 }

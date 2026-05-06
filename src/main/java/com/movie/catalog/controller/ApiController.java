@@ -7,13 +7,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.movie.catalog.config.AppConfig;
+import com.movie.catalog.dto.AppInfoResponseDTO;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
-@RequestMapping("/api")
-@Tag(name = "System Info", description = "Application metadata and configuration info")
+@RequestMapping(path = "/api", produces = "application/json")
+@Tag(
+    name = "System Info",
+    description = "Provides runtime application metadata such as service name and version"
+)
 public class ApiController {
 
     private final AppConfig appConfig;
@@ -23,11 +30,11 @@ public class ApiController {
     }
 
     @GetMapping("/info")
-    @Operation(summary = "Get application info")
-    public Map<String, String> getInfo() {
-        return Map.of(
-            "name", appConfig.name(),
-            "version", appConfig.version()
-        );
+    @Operation(
+        summary = "Get application info",
+        description = "Returns the service name and version from configuration."
+    )
+    public AppInfoResponseDTO getInfo() {
+        return new AppInfoResponseDTO(appConfig.name(), appConfig.version());
     }
 }

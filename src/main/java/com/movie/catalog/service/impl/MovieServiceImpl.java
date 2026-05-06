@@ -144,7 +144,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public void addGenreToMovie(Long movieId, Long genreId) {
+    public MovieResponseDTO addGenreToMovie(Long movieId, Long genreId) {
 
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found: " + movieId));
@@ -156,13 +156,11 @@ public class MovieServiceImpl implements MovieService {
         Genre genre = genreRepository.findById(genreId)
                 .orElseThrow(() -> new ResourceNotFoundException("Genre not found: " + genreId));
 
-        if (movie.getGenres().contains(genre)) {
-            return;
+        if (!movie.getGenres().contains(genre)) {
+            movie.getGenres().add(genre);
+            movie = movieRepository.save(movie);
         }
-
-        movie.getGenres().add(genre);
-
-        movieRepository.save(movie);
+        return MovieMapper.movieToResponse(movie);
     }
 
     @Override

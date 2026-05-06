@@ -1,6 +1,10 @@
 package com.movie.catalog.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -508,7 +512,11 @@ class MovieServiceTest {
     void addGenreToMovie_success() {
 
         Movie movie = new Movie();
+        movie.setTitle("Krrish");
         movie.setGenres(new HashSet<>());
+
+        Director director = new Director(1L, "Aditya Dhar", "Indian", 1983, null);
+        movie.setDirector(director);
 
         Genre genre = new Genre();
         genre.setId(1L);
@@ -516,10 +524,15 @@ class MovieServiceTest {
         when(movieRepository.findById(1L)).thenReturn(Optional.of(movie));
         when(genreRepository.findById(1L)).thenReturn(Optional.of(genre));
         when(catalogConfig.maxGenresPerMovie()).thenReturn(5);
+        when(movieRepository.save(movie)).thenReturn(movie);
 
         service.addGenreToMovie(1L, 1L);
 
         assertTrue(movie.getGenres().contains(genre));
+
+        verify(movieRepository).findById(1L);
+        verify(genreRepository).findById(1L);
+        verify(catalogConfig).maxGenresPerMovie();
         verify(movieRepository).save(movie);
     }
 
@@ -538,10 +551,12 @@ class MovieServiceTest {
 
     @Test
     void addGenreToMovie_alreadyPresent() {
-        // Arrange
+        
         Genre genre = new Genre(1L, "Action", new HashSet<>());
+        Director director = new Director(1L, "Aditya Dhar", "Indian", 1983, null);
         Movie movie = new Movie();
         movie.setGenres(new HashSet<>(Set.of(genre)));
+        movie.setDirector(director);
 
         when(movieRepository.findById(1L)).thenReturn(Optional.of(movie));
         when(genreRepository.findById(1L)).thenReturn(Optional.of(genre));

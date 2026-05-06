@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/genres")
+@RequestMapping(path = "/api/genres", produces = "application/json")
 @Tag(
     name = "Genre Management",
     description = "APIs for managing movie genres"
@@ -32,15 +32,25 @@ public class GenreController {
         this.genreService = genreService;
     }
 
+    @Operation(
+        summary = "Create a new genre",
+        description = "Creates a movie genre such as Action, Drama, Thriller, or Comedy."
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create genre")
-    public GenreResponseDTO createGenre(@Valid @RequestBody GenreRequestDTO dto) {
+    public GenreResponseDTO createGenre(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                description = "Genre creation payload (e.g., Action, Drama)"
+            )
+            @Valid @RequestBody GenreRequestDTO dto) {
         return genreService.create(dto);
     }
 
+    @Operation(
+        summary = "Get all genres",
+        description = "Returns list of all available movie genres in the system"
+    )
     @GetMapping
-    @Operation(summary = "Get all genres")
     public List<GenreResponseDTO> getAllGenres() {
         return genreService.getAll();
     }

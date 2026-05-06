@@ -13,6 +13,6 @@ public interface MovieService {
     MovieResponseDTO update(Long id, MovieRequestDTO request);
     void delete(Long id);
     List<MovieResponseDTO> getMoviesByDirector(Long directorId);
-    void addGenreToMovie(Long movieId, Long genreId);
+    MovieResponseDTO addGenreToMovie(Long movieId, Long genreId);
     void removeGenreFromMovie(Long movieId, Long genreId);
 }

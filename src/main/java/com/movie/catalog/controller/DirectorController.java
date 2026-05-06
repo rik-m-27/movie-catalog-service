@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping("/api/directors")
+@RequestMapping(path = "/api/directors", produces = "application/json")
 @Tag(
     name = "Director Management",
     description = "APIs for managing directors and retrieving their associated movies"
@@ -39,43 +39,68 @@ public class DirectorController {
         this.movieService = movieService;
     }
 
+    @Operation(
+        summary = "Create a new director",
+        description = "Creates a director entry with name, nationality, and birth year."
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create a director")
-    public DirectorResponseDTO createDirector(@RequestBody @Valid DirectorRequestDTO request) {
+    public DirectorResponseDTO createDirector(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                description = "Director creation payload"
+            )
+            @RequestBody @Valid DirectorRequestDTO request) {
         return directorService.create(request);
     }
 
+    @Operation(
+        summary = "Get all directors",
+        description = "Returns a list of all directors in the system"
+    )
     @GetMapping
-    @Operation(summary = "Get all directors")
     public List<DirectorResponseDTO> getAllDirectors() {
         return directorService.getAll();
     }
 
+    @Operation(
+        summary = "Get director by ID",
+        description = "Fetches a single director along with basic profile information"
+    )
     @GetMapping("/{id}")
-    @Operation(summary = "Get director by ID")
     public DirectorResponseDTO getDirectorById(@PathVariable Long id) {
         return directorService.getById(id);
     }
 
+    @Operation(
+        summary = "Update director details",
+        description = "Updates existing director information by ID"
+    )
     @PutMapping("/{id}")
-    @Operation(summary = "Update director details")
     public DirectorResponseDTO updateDirector(
             @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                description = "Updated director payload"
+            )
             @RequestBody @Valid DirectorRequestDTO request) {
         return directorService.update(id, request);
     }
 
+    @Operation(
+        summary = "Delete director",
+        description = "Removes a director permanently from the system"
+    )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete director")
     public void deleteDirector(@PathVariable Long id) {
         directorService.delete(id);
     }
-
+    @Operation(
+        summary = "Get movies by director",
+        description = "Fetches all movies associated with a given director ID"
+    )
     @GetMapping("/{id}/movies")
-    @Operation(summary = "Get all movies by director")
     public List<MovieResponseDTO> getMoviesByDirector(@PathVariable Long id) {
         return movieService.getMoviesByDirector(id);
     }
+    
 }
