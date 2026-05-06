@@ -9,13 +9,13 @@ public final class GenreMapper {
     private GenreMapper() {
     }
 
-    public static Genre requestDtoToGenre(GenreRequestDTO dto) {
+    public static Genre requestToGenre(GenreRequestDTO dto) {
         Genre genre = new Genre();
         genre.setName(dto.getName());
         return genre;
     }
 
-    public static GenreResponseDTO genreToDto(Genre genre) {
+    public static GenreResponseDTO genreToResponse(Genre genre) {
         return GenreResponseDTO.builder()
                 .id(genre.getId())
                 .name(genre.getName())

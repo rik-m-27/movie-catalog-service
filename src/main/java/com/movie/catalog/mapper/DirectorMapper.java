@@ -9,7 +9,7 @@ public final class DirectorMapper {
     private DirectorMapper() {
     }
 
-    public static Director requestDtoToDirector(DirectorRequestDTO dto) {
+    public static Director requestToDirector(DirectorRequestDTO dto) {
         Director director = new Director();
         director.setName(dto.getName());
         director.setNationality(dto.getNationality());
@@ -17,7 +17,7 @@ public final class DirectorMapper {
         return director;
     }
 
-    public static DirectorResponseDTO directorToDto(Director director) {
+    public static DirectorResponseDTO directorToResponse(Director director) {
         return DirectorResponseDTO.builder()
                 .id(director.getId())
                 .name(director.getName())
