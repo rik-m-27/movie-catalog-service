@@ -42,8 +42,8 @@ public class GenreController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                 description = "Genre creation payload (e.g., Action, Drama)"
             )
-            @Valid @RequestBody GenreRequestDTO dto) {
-        return genreService.create(dto);
+            @Valid @RequestBody GenreRequestDTO request) {
+        return genreService.create(request);
     }
 
     @Operation(

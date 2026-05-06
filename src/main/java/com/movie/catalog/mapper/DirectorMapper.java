@@ -9,11 +9,11 @@ public final class DirectorMapper {
     private DirectorMapper() {
     }
 
-    public static Director requestToDirector(DirectorRequestDTO dto) {
+    public static Director requestToDirector(DirectorRequestDTO request) {
         Director director = new Director();
-        director.setName(dto.getName());
-        director.setNationality(dto.getNationality());
-        director.setBirthYear(dto.getBirthYear());
+        director.setName(request.getName());
+        director.setNationality(request.getNationality());
+        director.setBirthYear(request.getBirthYear());
         return director;
     }
 

@@ -7,7 +7,7 @@ import com.movie.catalog.dto.MovieResponseDTO;
 
 public interface MovieService {
 
-    MovieResponseDTO create(MovieRequestDTO dto);
+    MovieResponseDTO create(MovieRequestDTO request);
     MovieResponseDTO getById(Long id);
     List<MovieResponseDTO> getAll(String genre, Integer year);
     MovieResponseDTO update(Long id, MovieRequestDTO request);

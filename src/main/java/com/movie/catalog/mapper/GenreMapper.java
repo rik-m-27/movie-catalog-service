@@ -9,9 +9,9 @@ public final class GenreMapper {
     private GenreMapper() {
     }
 
-    public static Genre requestToGenre(GenreRequestDTO dto) {
+    public static Genre requestToGenre(GenreRequestDTO request) {
         Genre genre = new Genre();
-        genre.setName(dto.getName());
+        genre.setName(request.getName());
         return genre;
     }
 

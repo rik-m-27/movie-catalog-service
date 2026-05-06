@@ -12,11 +12,11 @@ public final class MovieMapper {
 
     }
 
-    public static Movie requestToMovie(MovieRequestDTO dto) {
+    public static Movie requestToMovie(MovieRequestDTO request) {
         Movie movie = new Movie();
-        movie.setTitle(dto.getTitle());
-        movie.setRating(dto.getRating());
-        movie.setReleaseYear(dto.getReleaseYear());
+        movie.setTitle(request.getTitle());
+        movie.setRating(request.getRating());
+        movie.setReleaseYear(request.getReleaseYear());
         return movie;
     }
 
