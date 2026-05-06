@@ -1,0 +1,9 @@
+services:
+  movie-service:
+    build: .
+    container_name: movie-catalog-container
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    restart: unless-stopped
